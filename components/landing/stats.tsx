@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ElementType } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Clock3, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 
 import "number-flow";
 import "number-flow/group";
 
-const NumberFlowEl = "number-flow" as any;
-const NumberFlowGroup = "number-flow-group" as any;
+const NumberFlowEl = "number-flow" as ElementType;
+const NumberFlowGroup = "number-flow-group" as ElementType;
 
 type StatItem = {
   id: string;
@@ -156,7 +156,7 @@ export const Stats = () => {
         </div>
 
         <NumberFlowGroup className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "200ms" }}>
-          {stats.map((stat, idx) => (
+          {stats.map((stat) => (
             <div
               key={stat.id}
               className="card-precision pearl-surface px-6 py-10 shadow-[0_8px_24px_rgba(0,0,0,0.04)] border border-[#0a0a0a]/20"

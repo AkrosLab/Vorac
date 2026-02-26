@@ -9,7 +9,7 @@ interface ServiceCTAsProps {
   variant?: "hero" | "card";
 }
 
-export function ServiceCTAs({ slug, serviceName, variant = "hero" }: ServiceCTAsProps) {
+export function ServiceCTAs({ slug, variant = "hero" }: ServiceCTAsProps) {
   if (variant === "card") {
     return (
       <Button 

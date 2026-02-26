@@ -1,6 +1,5 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { faqs } from "@/lib/data";
 import { ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";

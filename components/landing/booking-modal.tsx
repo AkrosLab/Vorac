@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -221,9 +221,9 @@ export const BookingModal = ({
           {isSuccess ? (
             <div className="flex flex-col items-center justify-center min-h-[400px] p-8 text-center">
               <CheckCircle2 className="h-16 w-16 text-foreground mb-4" aria-hidden="true" />
-              <h3 className="text-2xl font-bold text-foreground mb-2">Thanks — we'll be in touch shortly</h3>
+              <h3 className="text-2xl font-bold text-foreground mb-2">Thanks — we&apos;ll be in touch shortly</h3>
               <p className="text-muted-foreground">
-                We've received your booking request and will contact you soon.
+                We&apos;ve received your booking request and will contact you soon.
               </p>
             </div>
           ) : (
@@ -355,7 +355,7 @@ export const BookingModal = ({
                 {/* Details */}
                 <div>
                   <Label htmlFor="details" className="text-sm font-medium">
-                    DETAILS ABOUT THE ISSUE YOU'RE HAVING <span className="text-destructive">*</span>
+                    DETAILS ABOUT THE ISSUE YOU&apos;RE HAVING <span className="text-destructive">*</span>
                   </Label>
                   <textarea
                     id="details"

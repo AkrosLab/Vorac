@@ -6,9 +6,7 @@ import { navigationMenu } from "@/lib/navigation-data";
 import { ServiceCTAs } from "@/components/landing/service-ctas";
 
 interface PageProps {
-  params: {
-    slug: string[];
-  };
+  params: Promise<{ slug: string[] }>;
 }
 
 // Helper to find service label from slugs
@@ -727,8 +725,8 @@ function serviceContentFor(slugs: string[]): ServiceContent {
   return map[key] ?? base;
 }
 
-export default function ServicePage({ params }: PageProps) {
-  const { slug } = params;
+export default async function ServicePage({ params }: PageProps) {
+  const { slug } = await params;
   const serviceName = findServiceBySlugs(slug);
   const category = slug[0].replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
   const lastSlug = slug[slug.length - 1];

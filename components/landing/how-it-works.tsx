@@ -43,7 +43,7 @@ export const HowItWorks = () => {
           </p>
         </div>
         <div className={`grid grid-cols-1 md:grid-cols-3 gap-12 ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "100ms" }}>
-          {steps.map((step, idx) => {
+          {steps.map((step) => {
             const Icon = step.icon;
             return (
               <div key={step.number} className="relative group">

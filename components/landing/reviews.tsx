@@ -33,7 +33,7 @@ const StarRating = ({ rating }: { rating: number }) => {
 
 export const Reviews = () => {
   const [mounted, setMounted] = useState(false);
-  const [position, setPosition] = useState(0);
+  const [, setPosition] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [pauseTimeout, setPauseTimeout] = useState<NodeJS.Timeout | null>(null);
 
@@ -73,6 +73,7 @@ export const Reviews = () => {
         clearTimeout(pauseTimeout);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only init and cleanup; centerOffset is constant, pauseTimeout is cleared in cleanup
   }, []);
 
   // Continuous autoplay animation - optimized for performance

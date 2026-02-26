@@ -1,6 +1,5 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Home, Shield, Clock, Award, Phone } from "lucide-react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -76,7 +75,7 @@ export const Trust = () => {
           </p>
         </div>
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "100ms" }}>
-          {trustPoints.map((point, idx) => {
+          {trustPoints.map((point) => {
             const Icon = point.icon;
             return (
               <div
