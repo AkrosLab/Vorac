@@ -754,7 +754,7 @@ export default async function ServicePage({ params }: PageProps) {
         <section className="relative overflow-hidden py-24 sm:py-32 bg-[#f8f8f8]">
           <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
             <Image
-              src="/images/individual-page-hero%20.png"
+              src="/images/individual-page-hero.png"
               alt=""
               fill
               className="object-cover opacity-30"
