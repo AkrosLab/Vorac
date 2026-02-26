@@ -32,42 +32,42 @@ export const HowItWorks = () => {
   }, []);
 
   return (
-    <section id="how-it-works" className="py-24 sm:py-32">
+    <section id="how-it-works" className="py-20 sm:py-28">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className={`mx-auto max-w-3xl text-center mb-16 ${mounted ? "reveal-on-scroll" : ""}`}>
-          <h2 className="heading-precision text-4xl sm:text-5xl font-thin tracking-[0.16em] text-[#0a0a0a] uppercase mb-6">
+        <div className={`mx-auto max-w-3xl text-center mb-14 ${mounted ? "reveal-on-scroll" : ""}`}>
+          <h2 className="heading-precision text-3xl sm:text-4xl font-extralight tracking-[0.16em] text-[#0a0a0a] uppercase mb-5">
             How It Works
           </h2>
-          <p className="text-base text-[#1a1a1a] font-light leading-relaxed">
+          <p className="text-sm text-[#1a1a1a] font-light leading-relaxed tracking-[0.02em]">
             Professional service in three measured steps.
           </p>
         </div>
-        <div className={`grid grid-cols-1 md:grid-cols-3 gap-12 ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "100ms" }}>
+        <div className={`grid grid-cols-1 md:grid-cols-3 gap-10 ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "100ms" }}>
           {steps.map((step) => {
             const Icon = step.icon;
             return (
               <div key={step.number} className="relative group">
-                <div className="mb-8 flex items-center gap-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-none bg-[#0a0a0a] text-white font-thin text-xl tracking-wider border border-[#0a0a0a]/20">
+                <div className="mb-6 flex items-center gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center bg-[#0a0a0a] text-white font-light text-sm tracking-[0.12em] border border-[#0a0a0a]">
                     {step.number}
                   </div>
-                  <div className="h-10 w-10 rounded-none bg-[#f8f8f8] border border-[#0a0a0a]/20 flex items-center justify-center">
-                    <Icon className="h-5 w-5 text-[#0a0a0a]/70" aria-hidden="true" />
+                  <div className="h-9 w-9 flex items-center justify-center border border-[#0a0a0a]/[0.12]">
+                    <Icon className="h-4 w-4 text-[#0a0a0a]/60" aria-hidden="true" />
                   </div>
                 </div>
-                <h3 className="text-xl font-light text-[#0a0a0a] uppercase tracking-[0.12em] mb-4">{step.title}</h3>
-                <p className="text-sm text-[#1a1a1a] leading-relaxed font-extralight">{step.description}</p>
-                
+                <h3 className="text-base font-light text-[#0a0a0a] uppercase tracking-[0.12em] mb-3">{step.title}</h3>
+                <p className="text-sm text-[#1a1a1a] leading-relaxed font-extralight tracking-[0.02em]">{step.description}</p>
+
                 {step.number !== "03" && (
-                  <div className="hidden md:block absolute top-6 left-[88px] right-[-48px] h-px bg-[#0a0a0a]/8" aria-hidden />
+                  <div className="hidden md:block absolute top-5 left-[72px] right-[-40px] h-px bg-[#0a0a0a]/[0.08]" aria-hidden />
                 )}
               </div>
             );
           })}
         </div>
-        <div className={`mt-20 text-center p-8 rounded-none pearl-surface max-w-2xl mx-auto border border-[#0a0a0a]/20 ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "200ms" }}>
-          <p className="text-sm text-[#1a1a1a] font-extralight italic">
-            <strong className="text-[#0a0a0a] not-italic font-light uppercase tracking-[0.12em] text-xs mr-3">Emergency:</strong>
+        <div className={`mt-16 text-center p-6 border border-[#0a0a0a]/[0.08] max-w-2xl mx-auto bg-white ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "200ms" }}>
+          <p className="text-sm text-[#1a1a1a] font-extralight italic tracking-[0.02em]">
+            <strong className="text-[#0a0a0a] not-italic font-light uppercase tracking-[0.12em] text-[10px] mr-2">Emergency:</strong>
             Available 24/7 for urgent issues across London.
           </p>
         </div>

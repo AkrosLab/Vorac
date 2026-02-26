@@ -33,26 +33,26 @@ const StarRating = ({ rating }: { rating: number }) => {
 
 export const Reviews = () => {
   const [mounted, setMounted] = useState(false);
-  const [, setPosition] = useState(0);
+  const [position, setPosition] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [pauseTimeout, setPauseTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | undefined>(undefined);
   const lastTimeRef = useRef(0);
-  const positionRef = useRef(0); // Use ref for smooth animation without state updates
+  const positionRef = useRef(0);
   const isPausedRef = useRef(false);
+  const pauseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Create infinite loop by duplicating testimonials
   const infiniteTestimonials = [...testimonials, ...testimonials, ...testimonials];
   const cardWidth = 420;
-  const centerOffset = testimonials.length * cardWidth;
-  
-  // Autoplay settings - much slower and smoother
-  const baseSpeed = 0.025; // Much slower constant drift (reduced by ~70%)
-  const maxSpeed = 0.04; // Hard cap for readability (reduced by ~70%)
-  const pauseZone = 40; // Pixels around center where we slow down
+  const gap = 24;
+  const segmentWidth = testimonials.length * (cardWidth + gap);
+
+  // Constant speed for smooth flow (no pause zone)
+  const pixelsPerMs = 0.028;
 
   // Sync refs with state
   useEffect(() => {
@@ -61,78 +61,47 @@ export const Reviews = () => {
 
   useEffect(() => {
     setMounted(true);
-    positionRef.current = centerOffset;
-    setPosition(centerOffset);
+    positionRef.current = segmentWidth;
+    setPosition(segmentWidth);
     lastTimeRef.current = performance.now();
-    
+    if (trackRef.current) {
+      trackRef.current.style.transform = `translate(-50%, 0) translate3d(${-segmentWidth}px, 0, 0)`;
+    }
     return () => {
-      if (rafRef.current !== undefined) {
-        cancelAnimationFrame(rafRef.current);
-      }
-      if (pauseTimeout) {
-        clearTimeout(pauseTimeout);
-      }
+      if (rafRef.current !== undefined) cancelAnimationFrame(rafRef.current);
+      if (pauseTimeoutRef.current) clearTimeout(pauseTimeoutRef.current);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only init and cleanup; centerOffset is constant, pauseTimeout is cleared in cleanup
-  }, []);
+  }, [segmentWidth]);
 
-  // Continuous autoplay animation - optimized for performance
+  // Smooth constant flow: update track transform every frame via ref (no state throttle)
   useEffect(() => {
     let animationId: number | undefined;
     let lastUpdateTime = 0;
-    const updateInterval = 1000 / 30; // 30fps for better performance
+    const dotSyncInterval = 150; // Only sync state for dots at low frequency
 
     const animate = (currentTime: number) => {
-      // Skip frame calculation when paused to save CPU
       if (isPausedRef.current) {
         animationId = requestAnimationFrame(animate);
         rafRef.current = animationId;
         return;
       }
 
-      const shouldUpdateState = currentTime - lastUpdateTime >= updateInterval;
-      
-      if (lastTimeRef.current === 0) {
-        lastTimeRef.current = currentTime;
-        animationId = requestAnimationFrame(animate);
-        rafRef.current = animationId;
-        return;
-      }
-
-      const deltaTime = Math.min((currentTime - lastTimeRef.current) / 16.67, 1.5);
+      if (lastTimeRef.current === 0) lastTimeRef.current = currentTime;
+      const deltaMs = Math.min(currentTime - lastTimeRef.current, 50);
       lastTimeRef.current = currentTime;
 
-      let currentPosition = positionRef.current;
-      
-      // Calculate distance to nearest center
-      const centerCardIndex = Math.round(currentPosition / cardWidth);
-      const targetCenter = centerCardIndex * cardWidth;
-      const distanceToCenter = Math.abs(currentPosition - targetCenter);
-      
-      // Slow down in pause zone
-      let speed = baseSpeed;
-      if (distanceToCenter < pauseZone) {
-        const slowdownFactor = distanceToCenter / pauseZone;
-        speed = baseSpeed * (0.25 + slowdownFactor * 0.75);
-      }
-      
-      speed = Math.min(speed, maxSpeed);
-      
-      // Update position
-      currentPosition += speed * deltaTime * 60;
-      
-      // Handle infinite loop
-      const totalWidth = testimonials.length * cardWidth;
-      if (currentPosition >= totalWidth * 2) {
-        currentPosition -= totalWidth;
-      } else if (currentPosition < totalWidth) {
-        currentPosition += totalWidth;
-      }
-      
+      let currentPosition = positionRef.current + pixelsPerMs * deltaMs;
+
+      // Infinite loop: one segment width
+      if (currentPosition >= segmentWidth) currentPosition -= segmentWidth;
+      if (currentPosition < 0) currentPosition += segmentWidth;
       positionRef.current = currentPosition;
-      
-      // Update state less frequently to reduce re-renders
-      if (shouldUpdateState) {
+
+      if (trackRef.current) {
+        trackRef.current.style.transform = `translate(-50%, 0) translate3d(${-currentPosition}px, 0, 0)`;
+      }
+
+      if (currentTime - lastUpdateTime >= dotSyncInterval) {
         setPosition(currentPosition);
         lastUpdateTime = currentTime;
       }
@@ -141,89 +110,48 @@ export const Reviews = () => {
       rafRef.current = animationId;
     };
 
-    // Start animation only if not paused
     if (!isPausedRef.current) {
       lastTimeRef.current = performance.now();
       animationId = requestAnimationFrame(animate);
       rafRef.current = animationId;
     }
-    
+
     return () => {
-      if (animationId !== undefined) {
-        cancelAnimationFrame(animationId);
-      }
+      if (animationId !== undefined) cancelAnimationFrame(animationId);
     };
-  }, [isPaused]);
+  }, [isPaused, segmentWidth]);
 
   // Resume autoplay after interaction pause
   const resumeAutoplay = useCallback(() => {
-    if (pauseTimeout) {
-      clearTimeout(pauseTimeout);
+    if (pauseTimeoutRef.current) {
+      clearTimeout(pauseTimeoutRef.current);
     }
     const timeout = setTimeout(() => {
       setIsPaused(false);
     }, 2000); // Resume after 2 seconds of inactivity
-    setPauseTimeout(timeout);
-  }, [pauseTimeout]);
-
-  // Calculate 3D transform - subtle depth, no blur
-  const getCardTransform = (index: number, basePosition: number) => {
-    const cardPosition = index * cardWidth;
-    const distance = cardPosition - basePosition;
-    
-    // Normalize distance for calculations
-    let normalizedDistance = distance;
-    const halfWidth = (testimonials.length * cardWidth) / 2;
-    if (normalizedDistance > halfWidth) normalizedDistance -= testimonials.length * cardWidth;
-    if (normalizedDistance < -halfWidth) normalizedDistance += testimonials.length * cardWidth;
-
-    // Subtle 3D rotation for film-reel effect
-    const rotationY = normalizedDistance * -0.015;
-    const rotationZ = normalizedDistance * 0.001;
-    
-    // Gentle depth and scale - no blur
-    const depth = normalizedDistance * -0.1;
-    const scale = 1 - Math.abs(normalizedDistance) * 0.0004;
-    const clampedScale = Math.max(0.90, Math.min(1, scale));
-    
-    // Minimal opacity variation - all cards remain readable
-    const opacity = 1 - Math.abs(normalizedDistance) * 0.0005;
-    const clampedOpacity = Math.max(0.7, Math.min(1, opacity));
-
-    return {
-      transform: `translate3d(${distance}px, 0, ${depth}px) rotateY(${rotationY}deg) rotateZ(${rotationZ}deg) scale(${clampedScale})`,
-      opacity: clampedOpacity,
-      filter: "none", // No blur - all cards sharp
-      zIndex: Math.round(100 - Math.abs(normalizedDistance)),
-    };
-  };
+    pauseTimeoutRef.current = timeout;
+  }, []);
 
   // Scroll wheel support - pause and resume
   const handleWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault();
-    
     setIsPaused(true);
-    const delta = e.deltaY * 0.08; // Reduced sensitivity
-    const newPos = positionRef.current + delta;
-    const totalWidth = testimonials.length * cardWidth;
-    let wrappedPosition = newPos;
-    if (wrappedPosition >= totalWidth * 2) {
-      wrappedPosition -= totalWidth;
-    } else if (wrappedPosition < totalWidth) {
-      wrappedPosition += totalWidth;
+    let newPos = positionRef.current + e.deltaY * 0.08;
+    if (newPos >= segmentWidth) newPos -= segmentWidth;
+    if (newPos < 0) newPos += segmentWidth;
+    positionRef.current = newPos;
+    setPosition(newPos);
+    if (trackRef.current) {
+      trackRef.current.style.transform = `translate(-50%, 0) translate3d(${-newPos}px, 0, 0)`;
     }
-    
-    positionRef.current = wrappedPosition;
-    setPosition(wrappedPosition);
     resumeAutoplay();
-  }, [resumeAutoplay]);
+  }, [resumeAutoplay, segmentWidth]);
 
-  // Find center card index - use positionRef for accuracy
-  const centerCardIndex = Math.round(positionRef.current / cardWidth);
-  const activeIndex = centerCardIndex % testimonials.length;
+  const cardStep = cardWidth + gap;
+  const activeIndex = Math.round(position / cardStep) % testimonials.length;
 
   return (
-    <section id="reviews" className="relative py-32 sm:py-40 overflow-hidden">
+    <section id="reviews" className="relative py-28 sm:py-36 overflow-hidden">
       {/* Our Reputation Background Image */}
       <div className="absolute inset-0" style={{ transform: 'scale(0.95)' }}>
         <Image
@@ -246,11 +174,11 @@ export const Reviews = () => {
       
       <div className="relative container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 z-10">
         {/* Section Header */}
-        <div className={`mx-auto max-w-3xl text-center mb-20 ${mounted ? "reveal-on-scroll" : ""}`}>
-          <h2 className="text-[48px] sm:text-[64px] lg:text-[72px] font-thin tracking-[0.28em] text-[#0a0a0a] uppercase mb-6">
+        <div className={`mx-auto max-w-3xl text-center mb-16 ${mounted ? "reveal-on-scroll" : ""}`}>
+          <h2 className="section-title text-[40px] sm:text-[56px] lg:text-[64px] tracking-[0.22em] mb-6">
             Our Reputation
           </h2>
-          <div className="inline-flex items-center gap-4 bg-white border border-[#0a0a0a]/10 px-6 py-3 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+          <div className="inline-flex items-center gap-4 bg-white border border-[#0a0a0a]/[0.08] px-5 py-2.5">
             <StarRating rating={5} />
             <span className="text-sm font-light text-[#0a0a0a] tracking-[0.02em]">4.8/5</span>
             <span className="h-4 w-px bg-[#0a0a0a]/20" aria-hidden="true" />
@@ -267,83 +195,70 @@ export const Reviews = () => {
             perspectiveOrigin: "50% 50%",
           }}
         >
-          {/* Reel Track */}
+          {/* Smooth sliding track - transform updated every frame via ref */}
           <div
             ref={sliderRef}
-            className="relative h-[500px] sm:h-[550px] flex items-center justify-center select-none"
+            className="relative h-[500px] sm:h-[550px] overflow-hidden select-none flex items-center"
             onWheel={handleWheel}
-            style={{
-              touchAction: "pan-y pinch-zoom",
-            }}
+            style={{ touchAction: "pan-y pinch-zoom" }}
           >
-            {infiniteTestimonials.map((testimonial, index) => {
-              const transforms = getCardTransform(index, positionRef.current);
-              const isActive = index === centerCardIndex;
-
-              return (
-              <div
-                key={`${testimonial.id}-${index}`}
-                className="absolute"
-                style={{
-                  ...transforms,
-                  transition: "none",
-                  willChange: Math.abs(index - centerCardIndex) <= 2 ? "transform" : "auto",
-                  backfaceVisibility: "hidden",
-                  WebkitBackfaceVisibility: "hidden",
-                  transformStyle: "preserve-3d",
-                }}
-              >
-                  {/* Review Card */}
+            <div
+              ref={trackRef}
+              className="absolute left-1/2 flex items-center gap-6 will-change-transform"
+              style={{
+                transform: `translate(-50%, 0) translate3d(${-position}px, 0, 0)`,
+              }}
+            >
+              {infiniteTestimonials.map((testimonial, index) => {
+                const centerTrackIndex = Math.round(position / cardStep) % infiniteTestimonials.length;
+                const isActive = index === centerTrackIndex;
+                return (
                   <div
-                    className={`relative w-[380px] sm:w-[420px] bg-white border border-[#0a0a0a]/12 rounded-sm p-8 sm:p-10 ${
-                      isActive 
-                        ? "shadow-[0_12px_48px_rgba(0,0,0,0.12)]" 
-                        : "shadow-[0_4px_16px_rgba(0,0,0,0.06)]"
-                    }`}
+                    key={`${testimonial.id}-${index}`}
+                    className="flex-shrink-0"
+                    style={{ width: cardWidth }}
                   >
-                    {/* Star Rating */}
-                    <div className="mb-6">
-                      <StarRating rating={testimonial.rating} />
-                    </div>
-
-                    {/* Testimonial Text */}
-                    <blockquote className="mb-8">
-                      <p className="text-base sm:text-lg leading-relaxed text-[#1a1a1a] font-light italic">
-                        &ldquo;{testimonial.text}&rdquo;
-                      </p>
-                    </blockquote>
-
-                    {/* Customer Info */}
-                    <div className="border-t border-[#0a0a0a]/8 pt-6">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <p className="text-sm font-light text-[#0a0a0a] mb-1 tracking-[0.01em]">
-                            {testimonial.name}
-                          </p>
-                          <p className="text-xs text-[#1a1a1a] font-extralight tracking-[0.02em]">
-                            {testimonial.location}
-                          </p>
-                        </div>
-                        <div className="text-[10px] font-light uppercase tracking-[0.12em] text-[#1a1a1a]/60 bg-[#0a0a0a]/5 px-3 py-1.5 rounded-sm">
-                          {testimonial.service}
+                    <div
+                      className={`relative w-[380px] sm:w-[420px] bg-white border border-[#0a0a0a]/[0.08] p-8 sm:p-10 transition-shadow duration-300 ${
+                        isActive
+                          ? "shadow-[0_16px_48px_rgba(0,0,0,0.08)]"
+                          : "shadow-[0_4px_16px_rgba(0,0,0,0.04)]"
+                      }`}
+                    >
+                      <div className="mb-6">
+                        <StarRating rating={testimonial.rating} />
+                      </div>
+                      <blockquote className="mb-8">
+                        <p className="text-base sm:text-lg leading-relaxed text-[#1a1a1a] font-light italic">
+                          &ldquo;{testimonial.text}&rdquo;
+                        </p>
+                      </blockquote>
+                      <div className="border-t border-[#0a0a0a]/8 pt-6">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="text-sm font-light text-[#0a0a0a] mb-1 tracking-[0.01em]">
+                              {testimonial.name}
+                            </p>
+                            <p className="text-xs text-[#1a1a1a] font-extralight tracking-[0.02em]">
+                              {testimonial.location}
+                            </p>
+                          </div>
+                          <div className="text-[10px] font-light uppercase tracking-[0.12em] text-[#1a1a1a]/60 bg-[#0a0a0a]/5 px-3 py-1.5 rounded-sm">
+                            {testimonial.service}
+                          </div>
                         </div>
                       </div>
+                      {isActive && mounted && (
+                        <div
+                          className="absolute inset-0 border border-[#0a0a0a]/8 rounded-sm pointer-events-none"
+                          style={{ boxShadow: "inset 0 0 50px rgba(0, 0, 0, 0.03)" }}
+                        />
+                      )}
                     </div>
-
-                    {/* Focus Indicator */}
-                    {isActive && (
-                      <div
-                        className="absolute inset-0 border border-[#0a0a0a]/8 rounded-sm pointer-events-none"
-                        style={{
-                          boxShadow: "inset 0 0 50px rgba(0, 0, 0, 0.03)",
-                          opacity: mounted ? 1 : 0,
-                        }}
-                      />
-                    )}
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
 
           {/* Navigation Dots */}
@@ -352,13 +267,18 @@ export const Reviews = () => {
               <button
                 key={index}
                 onClick={() => {
-                  const targetPosition = (centerOffset + (index - activeIndex) * cardWidth);
+                  let targetPosition = positionRef.current + (index - activeIndex) * cardStep;
+                  if (targetPosition >= segmentWidth) targetPosition -= segmentWidth;
+                  if (targetPosition < 0) targetPosition += segmentWidth;
                   positionRef.current = targetPosition;
                   setPosition(targetPosition);
+                  if (trackRef.current) {
+                    trackRef.current.style.transform = `translate(-50%, 0) translate3d(${-targetPosition}px, 0, 0)`;
+                  }
                   setIsPaused(true);
                   resumeAutoplay();
                 }}
-                className={`relative transition-all duration-600 ${
+                className={`relative transition-all duration-300 outline-none focus-visible:ring-1 focus-visible:ring-[#0a0a0a]/20 focus-visible:ring-offset-2 rounded-none ${
                   index === activeIndex ? "w-10" : "w-6"
                 }`}
                 aria-label={`Go to review ${index + 1}`}

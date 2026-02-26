@@ -13,10 +13,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 })
 
-const applicationName = "Next Template"
-const title = "Next Template"
-const description = "Next.js Template"
-const url = "https://example.com"
+const applicationName = "VORAC"
+const title = "VORAC — Precision Plumbing & Carpentry | London"
+const description = "Precision engineering and meticulous construction services for London's most discerning properties. Qualified, insured, guaranteed."
+const url = "https://vorac.co.uk"
 
 const socialImages = [
   {
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   description,
   keywords: "",
   robots: "index, follow",
-  authors: [{ name: "Alex" }],
+  authors: [{ name: "VORAC" }],
   applicationName,
   alternates: {
     canonical: url,
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     // To Do: Change this to your Twitter handle
-    site: "@app",
+    site: "@vorac",
     title,
     description,
     images: socialImages,
@@ -68,7 +68,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col bg-[#fafafa] text-[#0a0a0a] antialiased`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}

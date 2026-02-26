@@ -1,7 +1,9 @@
 import { LandingHeader } from "@/components/landing/header";
 import { LandingFooter } from "@/components/landing/footer";
+import { QuoteModalOnly } from "@/components/landing/quote-modal-only";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { navigationMenu } from "@/lib/navigation-data";
 import { ServiceCTAs } from "@/components/landing/service-ctas";
 
@@ -734,6 +736,7 @@ export default async function ServicePage({ params }: PageProps) {
 
   return (
     <>
+      <QuoteModalOnly />
       <LandingHeader />
       <main className="bg-[#f8f8f8] min-h-screen text-black">
         <div className="border-b border-zinc-200 bg-white/80 backdrop-blur-sm">
@@ -748,18 +751,51 @@ export default async function ServicePage({ params }: PageProps) {
           </div>
         </div>
 
-        <section className="relative overflow-hidden py-24 sm:py-32">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.05),transparent_70%)]" aria-hidden="true" />
+        <section className="relative overflow-hidden py-24 sm:py-32 bg-[#f8f8f8]">
+          <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+            <Image
+              src="/images/individual-page-hero%20.png"
+              alt=""
+              fill
+              className="object-cover opacity-30"
+              sizes="100vw"
+              priority
+            />
+            <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+              <div className="absolute left-0 top-0 bottom-0 w-24 sm:w-32 bg-gradient-to-r from-[#f8f8f8] to-transparent" />
+              <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-32 bg-gradient-to-l from-[#f8f8f8] to-transparent" />
+              <div className="absolute top-0 left-0 right-0 h-20 sm:h-28 bg-gradient-to-b from-[#f8f8f8] to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 h-20 sm:h-28 bg-gradient-to-t from-[#f8f8f8] to-transparent" />
+            </div>
+          </div>
           <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl">
-              <h1 className="text-5xl sm:text-7xl font-semibold tracking-[0.18em] text-black mb-8 uppercase">
-                {serviceName}
-              </h1>
-              <p className="text-xl sm:text-2xl text-zinc-700 leading-relaxed mb-12">
-                {content.summary}
-              </p>
-              
-              <ServiceCTAs slug={lastSlug} serviceName={serviceName} />
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-12">
+              <div className="max-w-3xl">
+                <h1 className="text-5xl sm:text-7xl font-semibold tracking-[0.18em] text-black mb-8 uppercase">
+                  {serviceName}
+                </h1>
+                <p className="text-xl sm:text-2xl text-zinc-700 leading-relaxed mb-12">
+                  {content.summary}
+                </p>
+                <ServiceCTAs slug={lastSlug} serviceName={serviceName} />
+              </div>
+              <div className="flex flex-col items-center justify-center shrink-0 lg:self-center">
+                <Link href="/" className="flex flex-col items-center justify-center gap-4 text-black hover:opacity-80 transition-opacity" aria-label="VORAC Home">
+                  <div className="flex items-center justify-center w-full max-w-[280px] sm:max-w-[320px] aspect-square">
+                    <Image
+                      src="/images/logo.png"
+                      alt="Vorac logo"
+                      width={400}
+                      height={400}
+                      className="object-contain max-w-full max-h-full"
+                      sizes="(min-width: 640px) 320px, 280px"
+                    />
+                  </div>
+                  <div className="flex items-center justify-center w-full">
+                    <span className="text-[2.025rem] sm:text-[2.7rem] font-light tracking-[0.24em] uppercase text-center">vorac</span>
+                  </div>
+                </Link>
+              </div>
             </div>
           </div>
         </section>

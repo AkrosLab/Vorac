@@ -45,8 +45,7 @@ export const Trust = () => {
   }, []);
 
   return (
-    <section id="why-vorac" className="relative py-24 sm:py-32 overflow-hidden">
-      {/* Why VORAC Background Image */}
+    <section id="why-vorac" className="relative py-20 sm:py-28 overflow-hidden">
       <div className="absolute inset-0">
         <Image
           src="/images/why vorac background.png"
@@ -56,37 +55,36 @@ export const Trust = () => {
           sizes="100vw"
           priority
         />
-        {/* Top and bottom fade gradients */}
-        <div 
+        <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'linear-gradient(to bottom, #fafafa 0%, transparent 15%, transparent 85%, #fafafa 100%)'
+            background: 'linear-gradient(to bottom, #fafafa 0%, transparent 12%, transparent 88%, #fafafa 100%)'
           }}
         />
       </div>
-      
+
       <div className="relative container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 z-10">
-        <div className={`mx-auto max-w-3xl text-center mb-16 ${mounted ? "reveal-on-scroll" : ""}`}>
-          <h2 className="heading-precision text-4xl sm:text-5xl font-thin tracking-[0.16em] text-[#0a0a0a] uppercase mb-6">
+        <div className={`mx-auto max-w-3xl text-center mb-14 ${mounted ? "reveal-on-scroll" : ""}`}>
+          <h2 className="heading-precision text-3xl sm:text-4xl font-extralight tracking-[0.16em] text-[#0a0a0a] uppercase mb-5">
             Why VORAC
           </h2>
-          <p className="text-base text-[#1a1a1a] font-light leading-relaxed">
+          <p className="text-sm text-[#1a1a1a] font-light leading-relaxed tracking-[0.02em]">
             Premium service quality built on trust and measured reliability.
           </p>
         </div>
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "100ms" }}>
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "100ms" }}>
           {trustPoints.map((point) => {
             const Icon = point.icon;
             return (
               <div
                 key={point.title}
-                className="card-precision p-8 pearl-surface shadow-[0_4px_16px_rgba(0,0,0,0.04)] border border-[#0a0a0a]/20"
+                className="card-precision p-6 border border-[#0a0a0a]/[0.08] bg-white"
               >
-                <div className="mb-6 h-12 w-12 rounded-none bg-[#f8f8f8] flex items-center justify-center border border-[#0a0a0a]/20">
-                  <Icon className="h-5 w-5 text-[#0a0a0a]/70" aria-hidden="true" />
+                <div className="mb-5 h-10 w-10 flex items-center justify-center border border-[#0a0a0a]/[0.12]">
+                  <Icon className="h-4 w-4 text-[#0a0a0a]/60" aria-hidden="true" />
                 </div>
-                <h3 className="text-lg font-light text-[#0a0a0a] uppercase tracking-[0.1em] mb-3">{point.title}</h3>
-                <p className="text-sm text-[#1a1a1a] leading-relaxed font-extralight">{point.description}</p>
+                <h3 className="text-sm font-light text-[#0a0a0a] uppercase tracking-[0.12em] mb-2">{point.title}</h3>
+                <p className="text-sm text-[#1a1a1a] leading-relaxed font-extralight tracking-[0.02em]">{point.description}</p>
               </div>
             );
           })}

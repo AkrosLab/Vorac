@@ -38,13 +38,13 @@ export default function Home() {
     <>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-zinc-900 focus:rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-white focus:text-[#0a0a0a] focus:border focus:border-[#0a0a0a]/15 focus:outline-none focus:ring-0"
       >
         Skip to main content
       </a>
       <LandingHeader />
       <main id="main-content" className="pearl-bg text-[#0a0a0a]">
-        <div className="space-y-28 sm:space-y-36 pb-32">
+        <div className="space-y-28 sm:space-y-32 pb-28">
           <Hero />
           <Stats />
           <Services />

@@ -35,46 +35,44 @@ export const Services = () => {
   return (
     <section className="relative py-20 sm:py-28 overflow-hidden">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className={`mb-16 text-center ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "100ms" }}>
-          <h2 className="text-[48px] sm:text-[64px] lg:text-[80px] font-thin tracking-[0.28em] text-[#0a0a0a] uppercase mb-4">
-            OUR SERVICES
+        <div className={`mb-12 text-center ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "100ms" }}>
+          <h2 className="section-title text-[36px] sm:text-[48px] lg:text-[60px] tracking-[0.2em] mb-4">
+            Our Services
           </h2>
-          <p className="text-lg sm:text-xl text-[#1a1a1a] font-light tracking-[0.02em] max-w-2xl mx-auto">
+          <p className="text-[15px] sm:text-[16px] text-[#1a1a1a] font-light tracking-[0.02em] max-w-xl mx-auto leading-relaxed">
             Precision engineering and construction services across London
           </p>
         </div>
 
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "200ms" }}>
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "200ms" }}>
           {allServices.map((service) => {
             const imageSrc = serviceImageMap[service.id] || "/images/plumbing-image.png";
-            const categoryLabel = service.category === "plumbing" ? "PLUMBING" : "CARPENTRY";
+            const categoryLabel = service.category === "plumbing" ? "Plumbing" : "Carpentry";
 
             return (
               <div
                 key={service.id}
-                className="relative group overflow-hidden rounded-sm bg-white border border-[#0a0a0a]/10 hover:border-[#0a0a0a]/20 transition-all duration-300 hover:shadow-lg"
+                className="group relative overflow-hidden bg-white border border-[#0a0a0a]/[0.08] hover:border-[#0a0a0a]/[0.14] transition-all duration-300"
               >
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <Image
                     src={imageSrc}
                     alt={service.description}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out"
                     sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                  
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <div className="inline-block mb-3">
-                      <span className="text-xs font-light tracking-[0.2em] uppercase text-white/90 bg-white/10 backdrop-blur-sm px-3 py-1.5 border border-white/20">
-                        {categoryLabel}
-                      </span>
-                    </div>
-                    <h3 className="text-2xl font-thin tracking-[0.1em] text-white uppercase mb-2">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+
+                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <span className="inline-block text-[10px] font-light tracking-[0.2em] uppercase text-white/90 border border-white/20 px-2.5 py-1 mb-2">
+                      {categoryLabel}
+                    </span>
+                    <h3 className="text-xl font-light tracking-[0.1em] text-white uppercase mb-1">
                       {service.title}
                     </h3>
-                    <p className="text-sm text-white/85 font-extralight">
+                    <p className="text-sm text-white/80 font-extralight tracking-[0.02em]">
                       {service.description}
                     </p>
                   </div>

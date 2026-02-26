@@ -5,16 +5,17 @@ import { openVoracQuoteModal } from "@/components/landing/quote-form";
 
 interface ServiceCTAsProps {
   slug: string;
-  serviceName: string;
+  serviceName?: string;
   variant?: "hero" | "card";
 }
 
 export function ServiceCTAs({ slug, variant = "hero" }: ServiceCTAsProps) {
   if (variant === "card") {
     return (
-      <Button 
-        size="lg" 
-        className="h-14 rounded-none bg-[#e0e0e0] text-black hover:bg-[#d6d6d6] font-normal shadow-sm border border-black/20"
+      <Button
+        size="lg"
+        variant="secondary"
+        className="uppercase tracking-[0.12em] border-[#0a0a0a]/12 hover:border-[#0a0a0a]/20 bg-white text-[#0a0a0a] hover:bg-zinc-50"
         onClick={() => openVoracQuoteModal({ service: slug })}
       >
         Get a Fast Quote
@@ -24,9 +25,10 @@ export function ServiceCTAs({ slug, variant = "hero" }: ServiceCTAsProps) {
 
   return (
     <div className="flex flex-col sm:flex-row gap-4">
-      <Button 
-        size="lg" 
-        className="h-14 px-10 rounded-none bg-[#e0e0e0] text-black hover:bg-[#d6d6d6] font-normal text-lg shadow-sm transition-all duration-200 active:scale-[0.98] border border-black/20"
+      <Button
+        size="lg"
+        variant="secondary"
+        className="uppercase tracking-[0.12em] border-[#0a0a0a]/12 hover:border-[#0a0a0a]/20 bg-white text-[#0a0a0a] hover:bg-zinc-50"
         onClick={() => openVoracQuoteModal({ service: slug })}
       >
         Request a Quote

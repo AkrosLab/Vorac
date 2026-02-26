@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { serviceOptions } from "@/lib/data";
 import { CheckCircle2, Search, Target, X, ChevronDown } from "lucide-react";
+import emailjs from "@emailjs/browser";
+import * as validator from "validator";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 interface FormData {
   name: string;
@@ -30,7 +33,7 @@ export function openVoracQuoteModal(detail?: Partial<Pick<FormData, "service" | 
   window.dispatchEvent(new CustomEvent("vorac:open-quote", { detail }));
 }
 
-export const QuoteForm = () => {
+export const QuoteForm = ({ showSection = true }: { showSection?: boolean }) => {
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [barService, setBarService] = useState("");
@@ -45,6 +48,7 @@ export const QuoteForm = () => {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [lastActiveEl, setLastActiveEl] = useState<HTMLElement | null>(null);
@@ -172,8 +176,16 @@ export const QuoteForm = () => {
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
     if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.phone.trim()) newErrors.phone = "Contact number is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Contact number is required";
+    } else if (!isValidPhoneNumber(formData.phone.trim(), "GB")) {
+      newErrors.phone = "Please enter a valid UK phone number (e.g. 07123 456789 or +44 7123 456789)";
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!validator.isEmail(formData.email.trim(), { require_tld: true, allow_ip_domain: false })) {
+      newErrors.email = "Please enter a valid email address";
+    }
     if (!formData.service) newErrors.service = "Service is required";
     if (!formData.details.trim()) newErrors.details = "Details are required";
     setErrors(newErrors);
@@ -184,31 +196,62 @@ export const QuoteForm = () => {
     e.preventDefault();
     if (!validate()) return;
     setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    setTimeout(() => {
-      setIsSuccess(false);
-      closeModal();
-    }, 2000);
+    setSubmitError(null);
+    try {
+      const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ?? "service_6163799";
+      const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID ?? "template_inehvaz";
+      const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY ?? "nfNQkIWLHIAj3x-ia";
+      const serviceLabel = serviceMap.get(formData.service) ?? formData.service;
+
+      await emailjs.send(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        {
+          name: formData.name,
+          phone: formData.phone,
+          contact_number: formData.phone,
+          email: formData.email,
+          postcode: formData.postcode || "N/A",
+          service: serviceLabel,
+          service_id: formData.service,
+          service_label: serviceLabel,
+          details: formData.details,
+          submitted_at: new Date().toLocaleString("en-GB"),
+          page_url: typeof window !== "undefined" ? window.location.href : "",
+        },
+        { publicKey: PUBLIC_KEY }
+      );
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsSuccess(false);
+        closeModal();
+      }, 2000);
+    } catch (err) {
+      console.error("EmailJS error:", err);
+      setSubmitError("Something went wrong. Please try again or call us.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <section id="quote-form" className="py-24 sm:py-32">
+    <>
+      {showSection && (
+    <section id="quote-form" className="py-20 sm:py-28">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl">
-          <div className={`mb-16 text-center ${mounted ? "reveal-on-scroll" : ""}`}>
-            <h2 className="heading-precision text-4xl sm:text-6xl font-thin tracking-[0.16em] text-[#0a0a0a] uppercase mb-6">
+          <div className={`mb-14 text-center ${mounted ? "reveal-on-scroll" : ""}`}>
+            <h2 className="heading-precision text-3xl sm:text-4xl font-extralight tracking-[0.16em] text-[#0a0a0a] uppercase mb-5">
               Request a Quote
             </h2>
-            <p className="text-base text-[#1a1a1a] font-light leading-relaxed">
+            <p className="text-sm text-[#1a1a1a] font-light leading-relaxed tracking-[0.02em]">
               Select your service and postcode to get started with London&apos;s premium trade team.
             </p>
           </div>
 
-          <div className={`rounded-none border border-[#0a0a0a]/20 pearl-surface p-6 sm:p-8 shadow-[0_4px_16px_rgba(0,0,0,0.04)] ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "100ms" }}>
+          <div className={`border border-[#0a0a0a]/[0.08] bg-white p-6 sm:p-8 ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "100ms" }}>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-[1.4fr_1fr_auto] md:items-center">
-              <div className="flex items-center gap-3 rounded-none border border-[#0a0a0a]/20 bg-white px-5 py-3 focus-within:border-[#0a0a0a]/30 transition-all duration-200">
+              <div className="flex items-center gap-3 border border-[#0a0a0a]/[0.12] bg-white px-4 py-2.5 focus-within:border-[#0a0a0a]/[0.2] transition-colors">
                 <Search className="h-4 w-4 text-[#0a0a0a]/50" />
                 <select
                   value={barService}
@@ -222,7 +265,7 @@ export const QuoteForm = () => {
                 </select>
               </div>
 
-              <div className="flex items-center gap-3 rounded-none border border-[#0a0a0a]/20 bg-white px-5 py-3 focus-within:border-[#0a0a0a]/30 transition-all duration-200">
+              <div className="flex items-center gap-3 border border-[#0a0a0a]/[0.12] bg-white px-4 py-2.5 focus-within:border-[#0a0a0a]/[0.2] transition-colors">
                 <Target className="h-4 w-4 text-[#0a0a0a]/50" />
                 <Input
                   value={barPostcode}
@@ -235,7 +278,8 @@ export const QuoteForm = () => {
               <Button
                 type="button"
                 onClick={openFromBar}
-                className="btn-precision h-12 w-full rounded-none bg-white text-[#0a0a0a] hover:bg-[#f8f8f8] font-light px-8 text-xs tracking-[0.08em] uppercase border border-[#0a0a0a]/20 shadow-[0_2px_8px_rgba(0,0,0,0.03)]"
+                size="lg"
+                className="w-full uppercase tracking-[0.1em] border-[#0a0a0a]/12 hover:border-[#0a0a0a]/20 bg-white text-[#0a0a0a] hover:bg-white"
               >
                 Request Quote
               </Button>
@@ -244,18 +288,20 @@ export const QuoteForm = () => {
           </div>
         </div>
       </div>
+    </section>
+      )}
 
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
           <div className="absolute inset-0 bg-[#0a0a0a]/70 backdrop-blur-sm animate-in fade-in duration-300" onMouseDown={closeModal} />
-          <div className="relative w-full max-w-lg max-h-[90vh] overflow-hidden rounded-none pearl-surface shadow-2xl animate-in zoom-in-95 fade-in duration-300 flex flex-col border border-[#0a0a0a]/20">
-            
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-hidden bg-white shadow-[0_24px_48px_rgba(0,0,0,0.12)] animate-in zoom-in-95 fade-in duration-300 flex flex-col border border-[#0a0a0a]/[0.08]">
+
             {/* Simplified Modal Header */}
-            <div className="relative bg-white px-6 py-5 border-b border-[#0a0a0a]/8 shrink-0 flex items-center justify-between">
+            <div className="relative bg-white px-6 py-5 border-b border-[#0a0a0a]/[0.06] shrink-0 flex items-center justify-between">
               <h3 className="text-xl font-light tracking-[0.08em] text-[#0a0a0a] uppercase">Request a Quote</h3>
-              <button 
-                onClick={closeModal} 
-                className="rounded-none p-2 text-[#0a0a0a]/50 hover:text-[#0a0a0a] hover:bg-[#f8f8f8] transition-all border border-transparent hover:border-[#0a0a0a]/20"
+              <button
+                onClick={closeModal}
+                className="inline-flex size-9 items-center justify-center border border-[#0a0a0a]/10 hover:border-[#0a0a0a]/20 hover:bg-[#f8f8f8] text-[#0a0a0a]/70 hover:text-[#0a0a0a] transition-colors outline-none focus-visible:ring-1 focus-visible:ring-[#0a0a0a]/20 focus-visible:ring-offset-1 rounded-none"
                 aria-label="Close modal"
               >
                 <X className="h-4 w-4" />
@@ -270,7 +316,7 @@ export const QuoteForm = () => {
                     <CheckCircle2 className="h-8 w-8 text-white" />
                   </div>
                   <h4 className="text-2xl font-light text-[#0a0a0a] mb-3 tracking-[0.08em] uppercase">Request Sent</h4>
-                  <p className="text-[#1a1a1a] text-sm font-extralight">We&apos;ll be in touch within 60 minutes.</p>
+                  <p className="text-[#1a1a1a] text-sm font-extralight">We will review your request and will contact you shortly.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
@@ -333,9 +379,9 @@ export const QuoteForm = () => {
                         <button
                           type="button"
                           onClick={() => setSelectOpen(!selectOpen)}
-                          className={`w-full h-11 rounded-none border border-[#0a0a0a]/20 bg-white text-[#0a0a0a] text-sm px-4 flex items-center justify-between font-light transition-all ${
-                            selectOpen ? 'border-[#0a0a0a]/20 ring-1 ring-[#0a0a0a]/20' : 'hover:border-[#0a0a0a]/20'
-                          } ${errors.service ? 'border-red-500/50' : ''}`}
+                          className={`w-full h-11 flex items-center justify-between border text-left text-sm px-4 font-light transition-all outline-none focus-visible:ring-1 focus-visible:ring-[#0a0a0a]/20 focus-visible:ring-offset-1 rounded-none bg-white text-[#0a0a0a] border-[#0a0a0a]/12 hover:border-[#0a0a0a]/20 ${
+                            selectOpen ? "border-[#0a0a0a]/25 ring-1 ring-[#0a0a0a]/15" : ""
+                          } ${errors.service ? "border-red-400/50" : ""}`}
                           aria-expanded={selectOpen}
                           aria-haspopup="listbox"
                         >
@@ -351,8 +397,8 @@ export const QuoteForm = () => {
                                 key={option.value}
                                 type="button"
                                 onClick={() => handleServiceSelect(option.value)}
-                                className={`w-full text-left px-4 py-2.5 text-sm font-light text-[#0a0a0a] hover:bg-[#f8f8f8] transition-colors ${
-                                  formData.service === option.value ? 'bg-[#f8f8f8]' : ''
+                                className={`w-full text-left px-4 py-2.5 text-sm font-light text-[#0a0a0a] border-b border-[#0a0a0a]/6 last:border-0 hover:bg-[#f8f8f8] transition-colors ${
+                                  formData.service === option.value ? "bg-[#f5f5f5]" : ""
                                 }`}
                               >
                                 {option.label}
@@ -380,10 +426,14 @@ export const QuoteForm = () => {
                   </div>
                   
                   <div className="pt-2 space-y-4">
-                    <Button 
-                      type="submit" 
-                      disabled={isSubmitting} 
-                      className="btn-precision w-full h-11 rounded-none bg-[#0a0a0a] text-white hover:bg-[#1a1a1a] font-light text-sm tracking-[0.08em] uppercase active:scale-95 disabled:opacity-50 transition-all border border-[#0a0a0a]/20"
+                    {submitError && (
+                      <p className="text-[10px] font-light text-red-600 uppercase tracking-wider">{submitError}</p>
+                    )}
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      variant="primary"
+                      className="w-full uppercase tracking-[0.1em] border-[#0a0a0a] bg-[#0a0a0a] hover:bg-[#1a1a1a] hover:border-[#1a1a1a] text-white"
                     >
                       {isSubmitting ? "Sending..." : "Send Quote Request"}
                     </Button>
@@ -394,6 +444,6 @@ export const QuoteForm = () => {
           </div>
         </div>
       )}
-    </section>
+    </>
   );
 };

@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, type ElementType } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Clock3, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 
 import "number-flow";
 import "number-flow/group";
 
-const NumberFlowEl = "number-flow" as ElementType;
-const NumberFlowGroup = "number-flow-group" as ElementType;
+// Custom elements (number-flow); typed as React.ElementType for JSX (see number-flow.d.ts)
+const NumberFlowEl = "number-flow" as React.ElementType;
+const NumberFlowGroup = "number-flow-group" as React.ElementType;
 
 type StatItem = {
   id: string;
@@ -121,33 +122,33 @@ export const Stats = () => {
   }, []);
 
   return (
-    <section className="py-24 sm:py-32 relative">
+    <section className="py-20 sm:py-28 relative">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className={`flex flex-col lg:flex-row lg:items-start lg:justify-between gap-12 mb-16 ${mounted ? "reveal-on-scroll" : ""}`}>
-          <div className="max-w-3xl space-y-6">
-            <p className="text-xs font-light uppercase tracking-[0.16em] text-[#1a1a1a]">
+        <div className={`flex flex-col lg:flex-row lg:items-start lg:justify-between gap-12 mb-14 ${mounted ? "reveal-on-scroll" : ""}`}>
+          <div className="max-w-3xl space-y-5">
+            <p className="text-[10px] font-light uppercase tracking-[0.18em] text-[#1a1a1a]">
               Operational metrics
             </p>
-            <h2 className="heading-precision text-4xl sm:text-5xl font-thin tracking-[0.16em] text-[#0a0a0a] uppercase">
+            <h2 className="heading-precision text-3xl sm:text-4xl font-extralight tracking-[0.16em] text-[#0a0a0a] uppercase">
               Measured reliability
             </h2>
-            <p className="text-base text-[#1a1a1a] leading-relaxed font-light">
+            <p className="text-sm text-[#1a1a1a] leading-relaxed font-light tracking-[0.02em]">
               Transparent metrics that reflect the precision and reliability we deliver across London.
             </p>
-            <div className="flex flex-wrap gap-2 pt-2">
-              <Badge className="rounded-none border border-[#0a0a0a]/20 bg-white text-[#0a0a0a] shadow-[0_2px_8px_rgba(0,0,0,0.03)] font-light text-[10px] uppercase tracking-[0.1em] px-3 py-1">
+            <div className="flex flex-wrap gap-2 pt-1">
+              <Badge className="rounded-none border-[#0a0a0a]/[0.12] bg-white text-[#0a0a0a] font-light text-[10px] uppercase tracking-[0.1em] px-2.5 py-1">
                 <ShieldCheck className="h-3 w-3 mr-1.5" aria-hidden="true" />
                 DBS checked teams
               </Badge>
-              <Badge className="rounded-none border border-[#0a0a0a]/20 bg-white text-[#0a0a0a] shadow-[0_2px_8px_rgba(0,0,0,0.03)] font-light text-[10px] uppercase tracking-[0.1em] px-3 py-1">
+              <Badge className="rounded-none border-[#0a0a0a]/[0.12] bg-white text-[#0a0a0a] font-light text-[10px] uppercase tracking-[0.1em] px-2.5 py-1">
                 <Sparkles className="h-3 w-3 mr-1.5" aria-hidden="true" />
                 12-month guarantee
               </Badge>
-              <Badge className="rounded-none border border-[#0a0a0a]/20 bg-white text-[#0a0a0a] shadow-[0_2px_8px_rgba(0,0,0,0.03)] font-light text-[10px] uppercase tracking-[0.1em] px-3 py-1">
+              <Badge className="rounded-none border-[#0a0a0a]/[0.12] bg-white text-[#0a0a0a] font-light text-[10px] uppercase tracking-[0.1em] px-2.5 py-1">
                 <Clock3 className="h-3 w-3 mr-1.5" aria-hidden="true" />
                 24/7 dispatch
               </Badge>
-              <Badge className="rounded-none border border-[#0a0a0a]/20 bg-white text-[#0a0a0a] shadow-[0_2px_8px_rgba(0,0,0,0.03)] font-light text-[10px] uppercase tracking-[0.1em] px-3 py-1">
+              <Badge className="rounded-none border-[#0a0a0a]/[0.12] bg-white text-[#0a0a0a] font-light text-[10px] uppercase tracking-[0.1em] px-2.5 py-1">
                 <MapPin className="h-3 w-3 mr-1.5" aria-hidden="true" />
                 Greater London
               </Badge>
@@ -155,11 +156,11 @@ export const Stats = () => {
           </div>
         </div>
 
-        <NumberFlowGroup className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "200ms" }}>
+        <NumberFlowGroup className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "200ms" }}>
           {stats.map((stat) => (
             <div
               key={stat.id}
-              className="card-precision pearl-surface px-6 py-10 shadow-[0_8px_24px_rgba(0,0,0,0.04)] border border-[#0a0a0a]/20"
+              className="card-precision border border-[#0a0a0a]/[0.08] bg-white px-6 py-8"
             >
               <AnimatedNumber
                 value={stat.value}
@@ -167,7 +168,7 @@ export const Stats = () => {
                 suffix={stat.suffix}
                 format={stat.format}
               />
-              <p className="mt-4 text-[11px] font-light uppercase tracking-[0.08em] text-[#1a1a1a] leading-relaxed">
+              <p className="mt-3 text-[10px] font-light uppercase tracking-[0.1em] text-[#1a1a1a] leading-relaxed">
                 {stat.label}
               </p>
             </div>

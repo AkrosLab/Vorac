@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { areas, coveredPostcodes } from "@/lib/data";
 import { useState, useEffect } from "react";
-import { MapPin, CheckCircle2, AlertCircle } from "lucide-react";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 
 export const Coverage = () => {
   const [mounted, setMounted] = useState(false);
@@ -30,33 +30,33 @@ export const Coverage = () => {
   };
 
   return (
-    <section id="coverage" className="py-24 sm:py-32">
+    <section id="coverage" className="py-20 sm:py-28">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className={`mx-auto max-w-3xl text-center mb-16 ${mounted ? "reveal-on-scroll" : ""}`}>
-          <h2 className="heading-precision text-4xl sm:text-5xl font-thin tracking-[0.16em] text-[#0a0a0a] uppercase mb-6">
+        <div className={`mx-auto max-w-3xl text-center mb-14 ${mounted ? "reveal-on-scroll" : ""}`}>
+          <h2 className="heading-precision text-3xl sm:text-4xl font-extralight tracking-[0.16em] text-[#0a0a0a] uppercase mb-5">
             Coverage Areas
           </h2>
-          <p className="text-base text-[#1a1a1a] font-light leading-relaxed">
+          <p className="text-sm text-[#1a1a1a] font-light leading-relaxed tracking-[0.02em]">
             Serving the whole of London and surrounding areas.
           </p>
         </div>
 
-        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-start ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "100ms" }}>
+        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-10 items-start ${mounted ? "reveal-on-scroll" : ""}`} style={{ animationDelay: "100ms" }}>
           <div>
-            <h3 className="text-xl font-light text-[#0a0a0a] mb-8 border-l-2 border-[#0a0a0a]/20 pl-4 uppercase tracking-[0.12em]">Areas We Cover</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+            <h3 className="text-sm font-light text-[#0a0a0a] mb-6 border-l border-[#0a0a0a]/[0.2] pl-4 uppercase tracking-[0.14em]">Areas We Cover</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
               {areas.map((area) => (
-                <div key={area} className="flex items-center gap-3 text-[#1a1a1a] group cursor-default">
-                  <MapPin className="h-3.5 w-3.5 text-[#0a0a0a]/60 group-hover:text-[#0a0a0a] transition-colors" aria-hidden="true" />
-                  <span className="text-sm font-extralight group-hover:text-[#0a0a0a] transition-colors">{area}</span>
+                <div key={area} className="flex items-center gap-2 text-[#1a1a1a] text-sm font-light group cursor-default">
+                  <span className="h-px w-3 bg-[#0a0a0a]/[0.2] group-hover:bg-[#0a0a0a]/[0.4] transition-colors" aria-hidden />
+                  <span className="font-extralight tracking-[0.02em] group-hover:text-[#0a0a0a] transition-colors">{area}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="p-10 rounded-none pearl-surface border border-[#0a0a0a]/20 shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
-            <h3 className="text-xl font-light text-[#0a0a0a] mb-4 tracking-[0.12em] uppercase">Not sure?</h3>
-            <p className="text-sm text-[#1a1a1a] mb-8 font-extralight">Enter your postcode to check if we service your area.</p>
+          <div className="p-8 border border-[#0a0a0a]/[0.08] bg-white">
+            <h3 className="text-sm font-light text-[#0a0a0a] mb-3 tracking-[0.12em] uppercase">Not sure?</h3>
+            <p className="text-sm text-[#1a1a1a] mb-6 font-extralight tracking-[0.02em]">Enter your postcode to check if we service your area.</p>
             
             <div className="space-y-6">
               <div>
@@ -76,12 +76,13 @@ export const Coverage = () => {
                         checkPostcode();
                       }
                     }}
-                    className="h-12 rounded-none bg-white border border-[#0a0a0a]/20 text-[#0a0a0a] placeholder:text-[#1a1a1a] focus:ring-[#0a0a0a]/30 focus:border-[#0a0a0a]/30 font-light"
+                  className="h-12 rounded-none bg-white border border-[#0a0a0a]/[0.12] text-[#0a0a0a] placeholder:text-[#1a1a1a]/50 font-light"
                   />
-                  <Button 
-                    onClick={checkPostcode} 
-                    type="button" 
-                    className="btn-precision h-12 px-8 rounded-none bg-white text-[#0a0a0a] hover:bg-[#f8f8f8] font-light shadow-[0_2px_8px_rgba(0,0,0,0.03)] border border-[#0a0a0a]/20 uppercase tracking-[0.08em] text-xs"
+                  <Button
+                    onClick={checkPostcode}
+                    type="button"
+                    size="lg"
+                    className="uppercase tracking-[0.1em] border-[#0a0a0a]/12 hover:border-[#0a0a0a]/20 bg-white text-[#0a0a0a] hover:bg-white h-12 px-6"
                   >
                     Check
                   </Button>
@@ -90,11 +91,7 @@ export const Coverage = () => {
               
               {result && (
                 <div
-                  className={`flex items-start gap-4 p-5 rounded-none animate-in zoom-in-95 duration-200 border ${
-                    result === "covered"
-                      ? "pearl-surface border-[#0a0a0a]/20"
-                      : "pearl-surface border-[#0a0a0a]/20"
-                  }`}
+                  className={`flex items-start gap-4 p-5 border bg-white border-[#0a0a0a]/[0.08] animate-in zoom-in-95 duration-200`}
                   role="status"
                 >
                   {result === "covered" ? (
