@@ -33,7 +33,7 @@ const StarRating = ({ rating }: { rating: number }) => {
 
 export const Reviews = () => {
   const [mounted, setMounted] = useState(false);
-  const [position, setPosition] = useState(0);
+  const [, setPosition] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -148,7 +148,7 @@ export const Reviews = () => {
   }, [resumeAutoplay, segmentWidth]);
 
   const cardStep = cardWidth + gap;
-  const activeIndex = Math.round(position / cardStep) % testimonials.length;
+  const activeIndex = Math.round(positionRef.current / cardStep) % testimonials.length;
 
   return (
     <section id="reviews" className="relative py-28 sm:py-36 overflow-hidden">
@@ -206,11 +206,11 @@ export const Reviews = () => {
               ref={trackRef}
               className="absolute left-1/2 flex items-center gap-6 will-change-transform"
               style={{
-                transform: `translate(-50%, 0) translate3d(${-position}px, 0, 0)`,
+                transform: `translate(-50%, 0) translate3d(${-positionRef.current}px, 0, 0)`,
               }}
             >
               {infiniteTestimonials.map((testimonial, index) => {
-                const centerTrackIndex = Math.round(position / cardStep) % infiniteTestimonials.length;
+                const centerTrackIndex = Math.round(positionRef.current / cardStep) % infiniteTestimonials.length;
                 const isActive = index === centerTrackIndex;
                 return (
                   <div
