@@ -3,33 +3,46 @@ node_modules/
 .pnp
 .pnp.js
 
-# Next.js
+# Build & cache
 .next/
 out/
-build
+dist/
+build/
+.turbo/
 
-# Env and secrets
+# Environment (never commit secrets)
 .env
-.env*.local
+.env.*
+!.env.example
 
-# Debug and logs
+# Debug & logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+*.log
 
 # OS
 .DS_Store
-*.pem
+Thumbs.db
+
+# IDE & editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
 
 # TypeScript
 *.tsbuildinfo
-next-env.d.ts
+
+# Testing
+coverage/
+.nyc_output/
 
 # Vercel
 .vercel
 
-# Testing
-coverage/
-
-# Optional: keep lockfiles (bun.lockb or package-lock.json) committed; ignore yarn.lock if you use bun
-# yarn.lock
+# Misc
+*.pem
+.cache/

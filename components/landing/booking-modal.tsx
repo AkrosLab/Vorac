@@ -1,50 +1,56 @@
-"use client"
+"use client";
 
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { X, CheckCircle2 } from "lucide-react"
-import { serviceOptions } from "@/lib/data"
-import { useState, useEffect, useRef } from "react"
-import emailjs from "@emailjs/browser"
-import * as validator from "validator"
-import { isValidPhoneNumber } from "libphonenumber-js"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { X, CheckCircle2 } from "lucide-react";
+import { serviceOptions } from "@/lib/data";
+import { useState, useEffect, useRef } from "react";
+import emailjs from "@emailjs/browser";
+import * as validator from "validator";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 export function openVoracBookingModal() {
-  if (typeof window === "undefined") return
-  window.dispatchEvent(new CustomEvent("vorac:open-booking"))
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent("vorac:open-booking"));
 }
 
 interface BookingModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  preselectedService?: string
-  triggerElement?: HTMLElement | null
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  preselectedService?: string;
+  triggerElement?: HTMLElement | null;
 }
 
 interface FormData {
-  name: string
-  contactNumber: string
-  email: string
-  postcode: string
-  service: string
-  details: string
+  name: string;
+  contactNumber: string;
+  email: string;
+  postcode: string;
+  service: string;
+  details: string;
 }
 
 interface FormErrors {
-  name?: string
-  contactNumber?: string
-  email?: string
-  service?: string
-  details?: string
+  name?: string;
+  contactNumber?: string;
+  email?: string;
+  service?: string;
+  details?: string;
 }
 
-const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ?? "service_6163799"
-const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID ?? "template_inehvaz"
-const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY ?? "nfNQkIWLHIAj3x-ia"
+const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID as string;
+const EMAILJS_TEMPLATE_ID = process.env
+  .NEXT_PUBLIC_EMAILJS_TEMPLATE_ID as string;
+const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY as string;
 
-export const BookingModal = ({ open, onOpenChange, preselectedService, triggerElement }: BookingModalProps) => {
+export const BookingModal = ({
+  open,
+  onOpenChange,
+  preselectedService,
+  triggerElement,
+}: BookingModalProps) => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     contactNumber: "",
@@ -52,12 +58,12 @@ export const BookingModal = ({ open, onOpenChange, preselectedService, triggerEl
     postcode: "",
     service: preselectedService || "",
     details: "",
-  })
+  });
 
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
-  const nameInputRef = useRef<HTMLInputElement>(null)
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   /* ==============================
      EFFECTS
@@ -65,15 +71,15 @@ export const BookingModal = ({ open, onOpenChange, preselectedService, triggerEl
 
   useEffect(() => {
     if (preselectedService) {
-      setFormData((prev) => ({ ...prev, service: preselectedService }))
+      setFormData((prev) => ({ ...prev, service: preselectedService }));
     }
-  }, [preselectedService])
+  }, [preselectedService]);
 
   useEffect(() => {
     if (open && !isSuccess) {
-      setTimeout(() => nameInputRef.current?.focus(), 100)
+      setTimeout(() => nameInputRef.current?.focus(), 100);
     }
-  }, [open, isSuccess])
+  }, [open, isSuccess]);
 
   useEffect(() => {
     if (!open) {
@@ -84,105 +90,117 @@ export const BookingModal = ({ open, onOpenChange, preselectedService, triggerEl
         postcode: "",
         service: preselectedService || "",
         details: "",
-      })
-      setErrors({})
-      setIsSuccess(false)
+      });
+      setErrors({});
+      setIsSuccess(false);
     }
-  }, [open, preselectedService])
+  }, [open, preselectedService]);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : ""
+    document.body.style.overflow = open ? "hidden" : "";
     return () => {
-      document.body.style.overflow = ""
-    }
-  }, [open])
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   /* ==============================
      VALIDATION (validator + libphonenumber-js)
   ============================== */
 
   const isValidUkPhone = (raw: string): boolean => {
-    if (!raw || !raw.trim()) return false
-    return isValidPhoneNumber(raw.trim(), "GB")
-  }
+    if (!raw || !raw.trim()) return false;
+    return isValidPhoneNumber(raw.trim(), "GB");
+  };
 
   const isValidEmail = (email: string): boolean => {
-    const trimmed = email.trim()
-    if (!trimmed || trimmed.length > 254) return false
+    const trimmed = email.trim();
+    if (!trimmed || trimmed.length > 254) return false;
     return validator.isEmail(trimmed, {
       allow_utf8_local_part: true,
       require_tld: true,
       allow_ip_domain: false,
-    })
-  }
+    });
+  };
 
-  const validate = (data?: FormData): { valid: boolean; newErrors: FormErrors } => {
-    const d = data ?? formData
-    const newErrors: FormErrors = {}
+  const validate = (
+    data?: FormData,
+  ): { valid: boolean; newErrors: FormErrors } => {
+    const d = data ?? formData;
+    const newErrors: FormErrors = {};
 
     if (!d.name.trim()) {
-      newErrors.name = "Name is required"
+      newErrors.name = "Name is required";
     }
 
     if (!d.contactNumber.trim()) {
-      newErrors.contactNumber = "Contact number is required"
+      newErrors.contactNumber = "Contact number is required";
     } else if (!isValidUkPhone(d.contactNumber)) {
-      newErrors.contactNumber = "Please enter a valid UK phone number (e.g. 07123 456789 or +44 7123 456789)"
+      newErrors.contactNumber =
+        "Please enter a valid UK phone number (e.g. 07123 456789 or +44 7123 456789)";
     }
 
     if (!d.email.trim()) {
-      newErrors.email = "Email is required"
+      newErrors.email = "Email is required";
     } else if (!isValidEmail(d.email)) {
-      newErrors.email = "Please enter a valid email address"
+      newErrors.email = "Please enter a valid email address";
     }
 
     if (!d.service) {
-      newErrors.service = "Please select a service"
+      newErrors.service = "Please select a service";
     }
 
     if (!d.details.trim()) {
-      newErrors.details = "Details are required"
+      newErrors.details = "Details are required";
     }
 
-    setErrors(newErrors)
-    return { valid: Object.keys(newErrors).length === 0, newErrors }
-  }
+    setErrors(newErrors);
+    return { valid: Object.keys(newErrors).length === 0, newErrors };
+  };
 
   /* ==============================
      SUBMIT (EMAILJS)
   ============================== */
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (isSubmitting) return
+    if (isSubmitting) return;
 
-    const form = e.currentTarget
+    const form = e.currentTarget;
     const dataFromForm: FormData = {
       name: (form.elements.namedItem("name") as HTMLInputElement)?.value ?? "",
-      contactNumber: (form.elements.namedItem("contactNumber") as HTMLInputElement)?.value ?? "",
-      email: (form.elements.namedItem("email") as HTMLInputElement)?.value ?? "",
-      postcode: (form.elements.namedItem("postcode") as HTMLInputElement)?.value ?? "",
-      service: (form.elements.namedItem("service") as HTMLSelectElement)?.value ?? "",
-      details: (form.elements.namedItem("details") as HTMLTextAreaElement)?.value ?? "",
-    }
+      contactNumber:
+        (form.elements.namedItem("contactNumber") as HTMLInputElement)?.value ??
+        "",
+      email:
+        (form.elements.namedItem("email") as HTMLInputElement)?.value ?? "",
+      postcode:
+        (form.elements.namedItem("postcode") as HTMLInputElement)?.value ?? "",
+      service:
+        (form.elements.namedItem("service") as HTMLSelectElement)?.value ?? "",
+      details:
+        (form.elements.namedItem("details") as HTMLTextAreaElement)?.value ??
+        "",
+    };
 
-    const { valid, newErrors } = validate(dataFromForm)
+    const { valid, newErrors } = validate(dataFromForm);
 
     if (!valid) {
-      const firstErrorKey = Object.keys(newErrors)[0]
+      const firstErrorKey = Object.keys(newErrors)[0];
       if (firstErrorKey) {
         setTimeout(() => {
-          document.getElementById(firstErrorKey)?.focus()
-        }, 0)
+          document.getElementById(firstErrorKey)?.focus();
+        }, 0);
       }
-      return
+      return;
     }
 
     try {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
 
-      const serviceLabel = serviceOptions.find((o) => o.value === dataFromForm.service)?.label ?? dataFromForm.service
+      const serviceLabel =
+        serviceOptions.find((o) => o.value === dataFromForm.service)?.label ??
+        dataFromForm.service;
 
       await emailjs.send(
         EMAILJS_SERVICE_ID,
@@ -199,45 +217,49 @@ export const BookingModal = ({ open, onOpenChange, preselectedService, triggerEl
           submitted_at: new Date().toLocaleString("en-GB"),
           page_url: typeof window !== "undefined" ? window.location.href : "",
         },
-        { publicKey: EMAILJS_PUBLIC_KEY }
-      )
+        { publicKey: EMAILJS_PUBLIC_KEY },
+      );
 
-      setIsSuccess(true)
+      setIsSuccess(true);
     } catch (error) {
-      console.error("EmailJS error:", error)
-      alert("Something went wrong. Please try again.")
+      console.error("EmailJS error:", error);
+      alert("Something went wrong. Please try again.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   /* ==============================
      HANDLERS
   ============================== */
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
+    const { name, value } = e.target;
 
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
+    }));
 
     if (errors[name as keyof FormErrors]) {
       setErrors((prev) => {
-        const copy = { ...prev }
-        delete copy[name as keyof FormErrors]
-        return copy
-      })
+        const copy = { ...prev };
+        delete copy[name as keyof FormErrors];
+        return copy;
+      });
     }
-  }
+  };
 
   const handleClose = () => {
-    onOpenChange(false)
+    onOpenChange(false);
     if (triggerElement) {
-      setTimeout(() => triggerElement.focus(), 100)
+      setTimeout(() => triggerElement.focus(), 100);
     }
-  }
+  };
 
   /* ==============================
      UI
@@ -269,13 +291,18 @@ export const BookingModal = ({ open, onOpenChange, preselectedService, triggerEl
           {isSuccess ? (
             <div className="flex flex-col items-center justify-center min-h-[400px] p-8 text-center">
               <CheckCircle2 className="h-16 w-16 mb-4" />
-              <h3 className="text-2xl font-bold mb-2">Thanks — we&apos;ll be in touch shortly</h3>
+              <h3 className="text-2xl font-bold mb-2">
+                Thanks — we&apos;ll be in touch shortly
+              </h3>
               <p>We&apos;ve received your booking request.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="space-y-1">
-                <Label htmlFor="name" className="text-sm font-medium text-[#1a1a1a]">
+                <Label
+                  htmlFor="name"
+                  className="text-sm font-medium text-[#1a1a1a]"
+                >
                   Name
                 </Label>
                 <Input
@@ -286,12 +313,21 @@ export const BookingModal = ({ open, onOpenChange, preselectedService, triggerEl
                   onChange={handleChange}
                   placeholder="Your name"
                   aria-invalid={!!errors.name}
-                  className={errors.name ? "border-red-500 focus-visible:ring-red-500/30" : ""}
+                  className={
+                    errors.name
+                      ? "border-red-500 focus-visible:ring-red-500/30"
+                      : ""
+                  }
                 />
-                {errors.name && <p className="text-xs text-red-600">{errors.name}</p>}
+                {errors.name && (
+                  <p className="text-xs text-red-600">{errors.name}</p>
+                )}
               </div>
               <div className="space-y-1">
-                <Label htmlFor="contactNumber" className="text-sm font-medium text-[#1a1a1a]">
+                <Label
+                  htmlFor="contactNumber"
+                  className="text-sm font-medium text-[#1a1a1a]"
+                >
                   Phone
                 </Label>
                 <Input
@@ -301,12 +337,21 @@ export const BookingModal = ({ open, onOpenChange, preselectedService, triggerEl
                   onChange={handleChange}
                   placeholder="UK phone number"
                   aria-invalid={!!errors.contactNumber}
-                  className={errors.contactNumber ? "border-red-500 focus-visible:ring-red-500/30" : ""}
+                  className={
+                    errors.contactNumber
+                      ? "border-red-500 focus-visible:ring-red-500/30"
+                      : ""
+                  }
                 />
-                {errors.contactNumber && <p className="text-xs text-red-600">{errors.contactNumber}</p>}
+                {errors.contactNumber && (
+                  <p className="text-xs text-red-600">{errors.contactNumber}</p>
+                )}
               </div>
               <div className="space-y-1">
-                <Label htmlFor="email" className="text-sm font-medium text-[#1a1a1a]">
+                <Label
+                  htmlFor="email"
+                  className="text-sm font-medium text-[#1a1a1a]"
+                >
                   Email
                 </Label>
                 <Input
@@ -317,12 +362,21 @@ export const BookingModal = ({ open, onOpenChange, preselectedService, triggerEl
                   onChange={handleChange}
                   placeholder="your@email.com"
                   aria-invalid={!!errors.email}
-                  className={errors.email ? "border-red-500 focus-visible:ring-red-500/30" : ""}
+                  className={
+                    errors.email
+                      ? "border-red-500 focus-visible:ring-red-500/30"
+                      : ""
+                  }
                 />
-                {errors.email && <p className="text-xs text-red-600">{errors.email}</p>}
+                {errors.email && (
+                  <p className="text-xs text-red-600">{errors.email}</p>
+                )}
               </div>
               <div className="space-y-1">
-                <Label htmlFor="postcode" className="text-sm font-medium text-[#1a1a1a]">
+                <Label
+                  htmlFor="postcode"
+                  className="text-sm font-medium text-[#1a1a1a]"
+                >
                   Postcode (optional)
                 </Label>
                 <Input
@@ -334,7 +388,10 @@ export const BookingModal = ({ open, onOpenChange, preselectedService, triggerEl
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="service" className="text-sm font-medium text-[#1a1a1a]">
+                <Label
+                  htmlFor="service"
+                  className="text-sm font-medium text-[#1a1a1a]"
+                >
                   Service
                 </Label>
                 <select
@@ -344,7 +401,9 @@ export const BookingModal = ({ open, onOpenChange, preselectedService, triggerEl
                   onChange={handleChange}
                   aria-invalid={!!errors.service}
                   className={`w-full border p-2 rounded-none bg-white ${
-                    errors.service ? "border-red-500" : "border-[#0a0a0a]/[0.12]"
+                    errors.service
+                      ? "border-red-500"
+                      : "border-[#0a0a0a]/[0.12]"
                   }`}
                 >
                   <option value="">Select service</option>
@@ -354,10 +413,15 @@ export const BookingModal = ({ open, onOpenChange, preselectedService, triggerEl
                     </option>
                   ))}
                 </select>
-                {errors.service && <p className="text-xs text-red-600">{errors.service}</p>}
+                {errors.service && (
+                  <p className="text-xs text-red-600">{errors.service}</p>
+                )}
               </div>
               <div className="space-y-1">
-                <Label htmlFor="details" className="text-sm font-medium text-[#1a1a1a]">
+                <Label
+                  htmlFor="details"
+                  className="text-sm font-medium text-[#1a1a1a]"
+                >
                   Details
                 </Label>
                 <textarea
@@ -369,10 +433,14 @@ export const BookingModal = ({ open, onOpenChange, preselectedService, triggerEl
                   placeholder="Describe your issue..."
                   aria-invalid={!!errors.details}
                   className={`w-full border p-2 rounded-none resize-none ${
-                    errors.details ? "border-red-500" : "border-[#0a0a0a]/[0.12]"
+                    errors.details
+                      ? "border-red-500"
+                      : "border-[#0a0a0a]/[0.12]"
                   }`}
                 />
-                {errors.details && <p className="text-xs text-red-600">{errors.details}</p>}
+                {errors.details && (
+                  <p className="text-xs text-red-600">{errors.details}</p>
+                )}
               </div>
 
               <Button type="submit" disabled={isSubmitting}>
@@ -383,5 +451,5 @@ export const BookingModal = ({ open, onOpenChange, preselectedService, triggerEl
         </div>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
