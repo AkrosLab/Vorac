@@ -15,8 +15,21 @@ const geistMono = Geist_Mono({
 
 const applicationName = "VORAC"
 const title = "VORAC — Precision Plumbing & Carpentry | London"
-const description = "Precision engineering and meticulous construction services for London's most discerning properties. Qualified, insured, guaranteed."
+const description =
+  "Precision engineering and meticulous construction services for London's most discerning properties. Qualified, insured, guaranteed. Same-day slots · Fixed pricing · 12-month guarantee."
 const url = "https://vorac.co.uk"
+
+const keywords = [
+  "plumbing London",
+  "carpentry London",
+  "emergency plumber",
+  "boiler repair London",
+  "bathroom installation",
+  "qualified tradespeople",
+  "insured plumber",
+  "same-day plumbing",
+  "VORAC",
+]
 
 const socialImages = [
   {
@@ -28,11 +41,16 @@ const socialImages = [
 ]
 
 export const metadata: Metadata = {
-  title,
+  title: {
+    default: title,
+    template: `%s | ${applicationName}`,
+  },
   description,
-  keywords: "",
+  keywords: keywords.join(", "),
   robots: "index, follow",
-  authors: [{ name: "VORAC" }],
+  authors: [{ name: "VORAC", url }],
+  creator: "VORAC",
+  publisher: "VORAC",
   applicationName,
   alternates: {
     canonical: url,
@@ -45,17 +63,25 @@ export const metadata: Metadata = {
     siteName: applicationName,
     images: socialImages,
     type: "website",
+    locale: "en_GB",
   },
   twitter: {
     card: "summary_large_image",
-    // To Do: Change this to your Twitter handle
     site: "@vorac",
     title,
     description,
     images: socialImages,
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: "/icon.svg",
+  },
+  themeColor: "#0a0a0a",
+  category: "construction",
+  formatDetection: {
+    telephone: true,
+    email: true,
+    address: true,
   },
 }
 
