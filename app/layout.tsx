@@ -73,8 +73,8 @@ export const metadata: Metadata = {
     images: socialImages,
   },
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    apple: "/icon.svg",
+    icon: [{ url: "/favicon.ico", type: "image/x-icon" }],
+    apple: "/favicon.ico",
   },
   themeColor: "#0a0a0a",
   category: "construction",
