@@ -60,38 +60,50 @@ export const LandingHeader = () => {
             </Button>
           </div>
 
-          {/* Mobile actions */}
+          {/* Mobile menu: hamburger + sheet */}
           <div className="flex items-center gap-2 lg:hidden">
+            <Button
+              onClick={handleRequestQuote}
+              size="sm"
+              className="uppercase tracking-[0.12em] border-[#0a0a0a]/[0.12] hover:border-[#0a0a0a]/[0.22] text-[#0a0a0a] font-light text-xs sm:text-sm"
+            >
+              Quote
+            </Button>
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Open menu" className="border-transparent">
+                <Button variant="ghost" size="icon" aria-label="Open menu" className="h-10 w-10 border-transparent shrink-0">
                   <Menu className="h-5 w-5" aria-hidden="true" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[380px] bg-white text-[#0a0a0a] rounded-none border-l border-[#0a0a0a]/[0.08] shadow-[0_24px_48px_rgba(0,0,0,0.08)]">
-                <SheetHeader>
+              <SheetContent
+                side="right"
+                className="flex w-[min(100vw,380px)] max-w-[calc(100vw-1rem)] flex-col gap-0 bg-white text-[#0a0a0a] rounded-none border-l border-[#0a0a0a]/[0.08] shadow-[0_24px_48px_rgba(0,0,0,0.08)] pr-[max(1rem,env(safe-area-inset-right))]"
+              >
+                <SheetHeader className="shrink-0">
                   <SheetTitle className="text-[#0a0a0a] font-light tracking-[0.08em] uppercase text-sm">Menu</SheetTitle>
                 </SheetHeader>
-                <nav className="mt-8 flex flex-col gap-0" aria-label="Mobile navigation">
-                  {mobileOnlyLinks.map((link) => (
-                    <Link
-                      key={link.label}
-                      href={link.href || "#"}
-                      className="py-3 text-sm font-light text-[#0a0a0a] tracking-[0.04em] border-b border-[#0a0a0a]/[0.06] last:border-0 hover:text-[#0a0a0a]/80 transition-colors"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+                <nav className="scrollbar-menu mt-6 flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain pl-5 pb-[env(safe-area-inset-bottom)]" aria-label="Mobile navigation">
+                  <div className="flex flex-col gap-0">
+                    {mobileOnlyLinks.map((link) => (
+                      <Link
+                        key={link.label}
+                        href={link.href || "#"}
+                        className="flex min-h-[44px] items-center py-3 pl-1 text-sm font-light text-[#0a0a0a] tracking-[0.04em] border-b border-[#0a0a0a]/[0.06] last:border-0 hover:text-[#0a0a0a]/80 active:bg-[#0a0a0a]/[0.04] transition-colors"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
 
-                  <div className="border-t border-[#0a0a0a]/[0.08] pt-4 mt-2">
+                  <div className="border-t border-[#0a0a0a]/[0.08] pt-4 mt-2 flex flex-col gap-0">
                     {navigationMenu.map((item) => {
                       if (item.href) {
                         return (
                           <Link
                             key={item.label}
                             href={item.href}
-                            className="block py-2.5 text-sm font-light text-[#0a0a0a] tracking-[0.04em] hover:text-[#0a0a0a]/80 transition-colors"
+                            className="flex min-h-[44px] items-center py-2.5 pl-1 text-sm font-light text-[#0a0a0a] tracking-[0.04em] hover:text-[#0a0a0a]/80 active:bg-[#0a0a0a]/[0.04] transition-colors"
                             onClick={() => setMobileMenuOpen(false)}
                           >
                             {item.label}
@@ -100,11 +112,11 @@ export const LandingHeader = () => {
                       }
 
                       return (
-                        <div key={item.label} className="py-2">
+                        <div key={item.label} className="py-2 pl-1">
                           <div className="text-[10px] font-light uppercase tracking-[0.18em] text-[#1a1a1a]/80 mb-2">
                             {item.label}
                           </div>
-                          <div className="pl-0 space-y-0">
+                          <div className="space-y-0 pl-2">
                             {item.items?.map((subItem) => {
                               if (subItem.items) {
                                 return (
@@ -112,12 +124,12 @@ export const LandingHeader = () => {
                                     <div className="text-[10px] font-light uppercase tracking-[0.12em] text-[#1a1a1a]/60 mb-1">
                                       {subItem.label}
                                     </div>
-                                    <div className="pl-0 space-y-0">
+                                    <div className="space-y-0 pl-2">
                                       {subItem.items.map((nestedItem) => (
                                         <Link
                                           key={nestedItem.label}
                                           href={nestedItem.href || "#"}
-                                          className="block py-2 text-sm font-light text-[#0a0a0a] hover:text-[#0a0a0a]/80 transition-colors"
+                                          className="flex min-h-[44px] items-center py-2 pl-1 text-sm font-light text-[#0a0a0a] hover:text-[#0a0a0a]/80 active:bg-[#0a0a0a]/[0.04] transition-colors"
                                           onClick={() => setMobileMenuOpen(false)}
                                         >
                                           {nestedItem.label}
@@ -132,7 +144,7 @@ export const LandingHeader = () => {
                                 <Link
                                   key={subItem.label}
                                   href={subItem.href || "#"}
-                                  className="block py-2 text-sm font-light text-[#0a0a0a] hover:text-[#0a0a0a]/80 transition-colors"
+                                  className="flex min-h-[44px] items-center py-2 pl-1 text-sm font-light text-[#0a0a0a] hover:text-[#0a0a0a]/80 active:bg-[#0a0a0a]/[0.04] transition-colors"
                                   onClick={() => setMobileMenuOpen(false)}
                                 >
                                   {subItem.label}
@@ -144,8 +156,18 @@ export const LandingHeader = () => {
                       );
                     })}
                   </div>
-
                 </nav>
+                <div className="shrink-0 border-t border-[#0a0a0a]/[0.08] p-4 pt-4">
+                  <Button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleRequestQuote();
+                    }}
+                    className="w-full uppercase tracking-[0.14em] border-[#0a0a0a]/[0.12] hover:border-[#0a0a0a]/[0.22] text-[#0a0a0a] font-light"
+                  >
+                    Request a Quote
+                  </Button>
+                </div>
               </SheetContent>
             </Sheet>
           </div>

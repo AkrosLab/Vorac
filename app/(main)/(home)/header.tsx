@@ -1,3 +1,6 @@
+"use client"
+
+import { useState } from "react"
 import { MenuIcon, ShirtIcon } from "lucide-react"
 import Link from "next/link"
 import { NavigationMenu, NavigationMenuList, NavigationMenuLink } from "@/components/ui/navigation-menu"
@@ -7,6 +10,8 @@ import { Logo } from "@/components/logo"
 import { ThemeToggle } from "@/components/theme-toggle"
 
 export const Header = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   const pages = [
     { href: "#faq", label: "FAQ" },
     { href: "#testimonials", label: "Testimonials" },
@@ -44,12 +49,13 @@ export const Header = () => {
         <Logo />
 
         <div className="flex gap-2">
-          <Sheet>
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden border-transparent text-[#0a0a0a] hover:bg-[#fafafa]"
+                aria-label="Open menu"
+                className="h-10 w-10 shrink-0 border-transparent text-[#0a0a0a] hover:bg-[#fafafa]"
               >
                 <MenuIcon className="h-5 w-5" />
                 <span className="sr-only">Toggle navigation menu</span>
@@ -57,25 +63,26 @@ export const Header = () => {
             </SheetTrigger>
 
             <SheetContent
-              className="overflow-y-auto w-full rounded-none border-l border-[#0a0a0a]/[0.08] bg-white shadow-[0_24px_48px_rgba(0,0,0,0.08)]"
               side="right"
+              className="flex w-[min(100vw,360px)] max-w-[calc(100vw-1rem)] flex-col gap-0 rounded-none border-l border-[#0a0a0a]/[0.08] bg-white shadow-[0_24px_48px_rgba(0,0,0,0.08)] pr-[max(1rem,env(safe-area-inset-right))]"
             >
-              <SheetHeader className="pt-6 pb-2">
+              <SheetHeader className="shrink-0 pt-6 pb-2">
                 <SheetTitle className="text-[#0a0a0a] font-light tracking-[0.12em] uppercase text-xs">
-                  <Link href="#" prefetch={false} className="flex items-center gap-2">
+                  <Link href="/" prefetch={false} className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                     <ShirtIcon className="h-5 w-5" />
                     <span className="sr-only">Home</span>
                   </Link>
                 </SheetTitle>
               </SheetHeader>
 
-              <nav className="flex flex-col p-4 pt-2" aria-label="Mobile navigation">
+              <nav className="scrollbar-menu flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain p-4 pt-2 pl-5 pb-[env(safe-area-inset-bottom)]" aria-label="Mobile navigation">
                 {pages.map((page) => (
                   <Link
                     key={page.href}
                     href={page.href}
-                    className="py-3 text-sm font-light text-[#0a0a0a] tracking-[0.06em] border-b border-[#0a0a0a]/[0.06] last:border-0 hover:opacity-80 transition-opacity"
                     prefetch={false}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex min-h-[44px] items-center py-3 pl-1 text-sm font-light text-[#0a0a0a] tracking-[0.06em] border-b border-[#0a0a0a]/[0.06] last:border-0 hover:opacity-80 active:bg-[#0a0a0a]/[0.04] transition-colors"
                   >
                     {page.label}
                   </Link>

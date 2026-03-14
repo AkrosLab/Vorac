@@ -548,7 +548,9 @@ export const QuoteForm = ({
                       variant="primary"
                       className="w-full uppercase tracking-[0.1em] border-[#0a0a0a] bg-[#0a0a0a] hover:bg-[#1a1a1a] hover:border-[#1a1a1a] text-white"
                     >
-                      {isSubmitting ? "Sending..." : "Send Quote Request"}
+                      {isSubmitting
+                        ? "Sending..."
+                        : "Send Quote Reqadjasndoadsuest"}
                     </Button>
                   </div>
                 </form>

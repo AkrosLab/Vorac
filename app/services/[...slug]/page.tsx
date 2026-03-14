@@ -592,6 +592,19 @@ function serviceContentFor(slugs: string[]): ServiceContent {
         "Area left tidy with panels refitted",
       ],
     },
+    "services/building/kitchen-fitting": {
+      summary: "Full kitchen fitting and installation—cabinets, worktops, appliances, and plumbing connections—delivered with precise alignment and tidy finishes.",
+      highlights: [
+        "Cabinet and worktop install with level, square runs",
+        "Appliance positioning, connections, and testing",
+        "Sink and tap fit, waste connections, and sealant finish",
+      ],
+      deliverables: [
+        "Units fixed level with doors and drawers adjusted",
+        "Worktops cut, joined, and sealed where required",
+        "Plumbing and waste connected and tested; area left clean",
+      ],
+    },
     "services/building/extractor-fans": {
       summary: "Extractor fan installations to improve ventilation without visual clutter.",
       highlights: [

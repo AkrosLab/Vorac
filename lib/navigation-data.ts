@@ -89,6 +89,7 @@ export const navigationMenu: NavigationItem[] = [
   {
     label: "Building",
     items: [
+      { label: "Kitchen Fitting", href: "/services/building/kitchen-fitting" },
       { label: "Extractor Fan Installations", href: "/services/building/extractor-fans" },
       { label: "Building Maintenance Services", href: "/services/building/maintenance" },
       { label: "Painting and Decorating", href: "/services/building/painting-decorating" },
@@ -113,7 +114,5 @@ export const navigationMenu: NavigationItem[] = [
 
 export const mobileOnlyLinks: NavigationItem[] = [
   { label: "Home", href: "/" },
-  { label: "Kitchens", href: "#" },
-  { label: "Pest Control", href: "#" },
 ];
 

@@ -226,6 +226,26 @@
     letter-spacing: var(--geo-type-tracking);
     transition: all 200ms cubic-bezier(0.25, 1, 0.5, 1);
   }
+
+  /* Refined scrollbar for mobile menu / panels */
+  .scrollbar-menu {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(10, 10, 10, 0.2) rgba(10, 10, 10, 0.04);
+  }
+  .scrollbar-menu::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-menu::-webkit-scrollbar-track {
+    background: rgba(10, 10, 10, 0.04);
+    border-radius: 3px;
+  }
+  .scrollbar-menu::-webkit-scrollbar-thumb {
+    background: rgba(10, 10, 10, 0.18);
+    border-radius: 3px;
+  }
+  .scrollbar-menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(10, 10, 10, 0.28);
+  }
 }
 
 @keyframes fadeIn {
